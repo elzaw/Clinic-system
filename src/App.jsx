@@ -9,6 +9,8 @@ import { Toaster } from "react-hot-toast";
 import Login from "./components/login";
 import { AuthProvider } from "./context/AuthContext";
 
+import Register from "./components/register/page";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -20,6 +22,7 @@ const router = createBrowserRouter([
     ],
   },
   { path: "/login", element: <Login /> },
+  { path: "/register", element: <Register /> },
 ]);
 
 function App() {
@@ -27,11 +30,12 @@ function App() {
 
   return (
     <AuthProvider
-      // className="min-h-screen h-full bg-gradient-to-b from-gray-100 to-blue-100"
-      dir="rtl"
+    // className="min-h-screen h-full bg-gradient-to-b from-gray-100 to-blue-100"
     >
-      <Toaster />
-      <RouterProvider router={router} />
+      <div dir="rtl">
+        <Toaster />
+        <RouterProvider router={router} />
+      </div>
     </AuthProvider>
   );
 }

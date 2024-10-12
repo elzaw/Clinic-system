@@ -1,8 +1,34 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { Button } from "../ui/button";
 
 const Navbar = () => {
+  const { logout, token } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get("/patients", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log("API Response:", response.data);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      }
+    };
+    fetchData();
+  }, [token]);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   const [open, setOpen] = useState(false);
   const links = [
     { url: "/", title: "الرئيسية" },
@@ -59,7 +85,14 @@ const Navbar = () => {
           </NavLink>
         ))}
       </div>
-
+      <div className="p-4 flex justify-center">
+        <Button
+          className="w-6/12 bg-black text-white hover:bg-gray-500  px-16 rounded"
+          onClick={handleLogout}
+        >
+          تسجيل الخروج
+        </Button>
+      </div>
       {/* Responsive menu */}
       <div className="md:hidden">
         {/* Menu button */}
@@ -70,17 +103,17 @@ const Navbar = () => {
           <motion.div
             variants={topVariants}
             animate={open ? "opened" : "closed"}
-            className="w-10 h-1 bg-white rounded origin-left"
+            className="w-10 h-1 bg-gray-900 rounded origin-left"
           ></motion.div>
           <motion.div
             variants={centerVariants}
             animate={open ? "opened" : "closed"}
-            className="w-10 h-1 bg-white rounded"
+            className="w-10 h-1 bg-gray-900 rounded"
           ></motion.div>
           <motion.div
             variants={bottomVariants}
             animate={open ? "opened" : "closed"}
-            className="w-10 h-1 bg-white rounded origin-left"
+            className="w-10 h-1 bg-gray-900 rounded origin-left"
           ></motion.div>
         </button>
         {/* Menu list */}
@@ -101,6 +134,14 @@ const Navbar = () => {
               </NavLink>
             </motion.div>
           ))}
+          <div className="p-4 flex justify-center">
+            <Button
+              className="w-1/2 bg-blue-500 text-white hover:bg-blue-100 hover:text-blue-900 rounded px-24"
+              onClick={handleLogout}
+            >
+              تسجيل الخروج
+            </Button>
+          </div>
         </motion.div>
       </div>
     </div>
