@@ -8,7 +8,6 @@ const Navbar = () => {
     { url: "/", title: "الرئيسية" },
     { url: "/patients", title: "المرضي" },
     { url: "/examinations", title: "الفحوصات" },
-    // { url: "/portfolio", title: "Portfolio" },
   ];
 
   const topVariants = {
@@ -32,7 +31,7 @@ const Navbar = () => {
       opacity: 1,
       x: 0,
       transition: {
-        staggerChildren: 0.3, // Staggering the animation for children
+        staggerChildren: 0.3,
       },
     },
   };
@@ -43,18 +42,26 @@ const Navbar = () => {
   };
 
   return (
-    <div className="h-full flex items-center justify-between text-3xl px-4 sm:px-8 md:px-12 lg:px-20 xl:px-48">
+    <div className="h-full flex items-center justify-between text-3xl px-4 sm:px-8 md:px-12 lg:px-20 xl:px-48  text-black my-3">
       {/* Links */}
-      <div className="hidden md:flex gap-4 w-1/3 ">
+      <div className="hidden md:flex gap-8 w-1/3">
         {links.map((link) => (
-          <NavLink to={link.url} key={link.url}>
+          <NavLink
+            to={link.url}
+            key={link.url}
+            className={({ isActive }) =>
+              `hover:text-gray-400 transition duration-300 ${
+                isActive ? "text-gray-400" : ""
+              }`
+            }
+          >
             {link.title}
           </NavLink>
         ))}
       </div>
 
-      {/* responsive menu */}
-      <div className="md:hidden ">
+      {/* Responsive menu */}
+      <div className="md:hidden">
         {/* Menu button */}
         <button
           className="w-10 h-8 flex flex-col justify-between z-50 relative top-5"
@@ -63,17 +70,17 @@ const Navbar = () => {
           <motion.div
             variants={topVariants}
             animate={open ? "opened" : "closed"}
-            className="w-10 h-1 bg-black rounded origin-left"
+            className="w-10 h-1 bg-white rounded origin-left"
           ></motion.div>
           <motion.div
             variants={centerVariants}
             animate={open ? "opened" : "closed"}
-            className="w-10 h-1 bg-black rounded "
+            className="w-10 h-1 bg-white rounded"
           ></motion.div>
           <motion.div
             variants={bottomVariants}
             animate={open ? "opened" : "closed"}
-            className="w-10 h-1 bg-black rounded origin-left"
+            className="w-10 h-1 bg-white rounded origin-left"
           ></motion.div>
         </button>
         {/* Menu list */}
@@ -81,12 +88,13 @@ const Navbar = () => {
           variants={listVariants}
           initial="closed"
           animate={open ? "opened" : "closed"}
-          className="absolute top-0 left-0 w-screen h-full bg-black text-white flex flex-col items-center justify-center gap-8 text-4xl z-40"
+          className="fixed top-0 left-0 w-screen h-full bg-gray-900 text-white flex flex-col items-center justify-center gap-8 text-4xl z-40"
         >
           {links.map((link) => (
             <motion.div key={link.url} variants={listItemVariants}>
               <NavLink
                 to={link.url}
+                className="hover:text-gray-400 transition duration-300"
                 onClick={() => setOpen(false)} // Close the menu on link click
               >
                 {link.title}

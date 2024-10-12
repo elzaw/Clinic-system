@@ -4,11 +4,15 @@
 
 
 :root {
-font-family: "Fustat", sans-serif;
+font-family: "El Messiri", sans-serif;
   font-optical-sizing: auto;
+  
+  
   
 }
 
+
+/* 
 /* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

@@ -12,6 +12,7 @@ const Patients = () => {
     handleSubmit,
     watch,
     setValue,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -48,9 +49,7 @@ const Patients = () => {
   const handleAddClick = (e) => {
     e.stopPropagation();
     setShowForm(!showForm); // Show form when the Add button is clicked
-    setValue("name", "");
-    setValue("address", "");
-    setValue("phone", "");
+    reset();
   };
 
   const handleEditClick = (patient) => {
@@ -122,7 +121,7 @@ const Patients = () => {
 
       {/* Form for adding a new patient */}
       {showForm && (
-        <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-20">
+        <div className="fixed top-0 left-0 w-full min-h-screen bg-black bg-opacity-15 flex items-center justify-center z-20">
           <div className="bg-white p-5 border border-gray-300 rounded-lg shadow-lg w-[90%] md:w-[50%] relative z-30">
             <h2 className="text-2xl font-bold mb-4">إضافة مريض جديد</h2>
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -194,7 +193,7 @@ const Patients = () => {
         {filteredPatients.map((patient) => (
           <div
             key={patient._id}
-            className="bg-white dark:bg-gray-950 rounded shadow-lg p-6 mt-5 cursor-pointer m-5  "
+            className="bg-white dark:bg-gray-950 rounded shadow-lg p-6 border border-blue-300 cursor-pointer m-5  "
             onClick={() => navigate(`/patient/${patient._id}`)}
           >
             <h2 className="text-2xl font-bold mb-4 flex justify-center">
@@ -234,7 +233,12 @@ const Patients = () => {
               </Button>
 
               {showEditForm && (
-                <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-20">
+                <div
+                  className="fixed top-0 left-0 w-full min-h-screen bg-black bg-opacity-15 flex items-center justify-center z-20"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
                   <div className="bg-white p-5 border border-gray-300 rounded-lg shadow-lg w-[90%] md:w-[50%] relative z-30">
                     <h2 className="text-2xl font-bold mb-4">
                       تعديل بيانات مريض
