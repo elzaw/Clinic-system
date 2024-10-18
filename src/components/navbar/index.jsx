@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "../ui/button";
+import api from "@/data/instance";
 
 const Navbar = () => {
   const { logout, token } = useAuth();
@@ -87,7 +88,7 @@ const Navbar = () => {
       </div>
       <div className="p-4 flex justify-center">
         <Button
-          className="w-6/12 bg-black text-white hover:bg-gray-500  px-16 rounded"
+          className="w-6/12 bg-black text-white hover:bg-gray-500  px-16 rounded hidden md:flex"
           onClick={handleLogout}
         >
           تسجيل الخروج

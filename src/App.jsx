@@ -1,15 +1,15 @@
 import "./App.css";
 // import Navbar from "./components/navbar";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Patients from "./components/patients";
-import Examinations from "./components/examinations";
+import Patients from "./pages/patients";
+import Examinations from "./pages/examinations";
 import AppLayout from "./AppLayout";
-import Patient from "./components/patient";
+import Patient from "./pages/patient";
 import { Toaster } from "react-hot-toast";
-import Login from "./components/login";
+import Login from "./pages/login";
 import { AuthProvider } from "./context/AuthContext";
 
-import Register from "./components/register/page";
+import Register from "./pages/register/page";
 
 const router = createBrowserRouter([
   {

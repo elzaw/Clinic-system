@@ -1,5 +1,5 @@
 import api from "@/data/instance";
-import { Button } from "../ui/button";
+import { Button } from "../../components/ui/button";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { redirect, useNavigate } from "react-router-dom";

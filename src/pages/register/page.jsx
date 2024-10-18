@@ -1,3 +1,5 @@
+import registerSVG from "../../assets/undraw_sign_up_n6im.svg";
+
 import { useForm } from "react-hook-form";
 import {
   Card,
@@ -6,10 +8,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../ui/card";
-import { Button } from "../ui/button";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
+} from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
+import { Label } from "../../components/ui/label";
+import { Input } from "../../components/ui/input";
 import { useNavigate } from "react-router-dom";
 import api from "@/data/instance";
 import { useState } from "react";
@@ -59,9 +61,10 @@ const Register = () => {
       <div className="w-full max-w-md space-y-8">
         <div className="flex justify-center h-48">
           {/* Optional Logo or Image */}
+          <img src={registerSVG} alt="logo" />
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Card className="rounded bg-white border py-5 m-8 ">
+          <Card className="rounded bg-white border py-3 m-8 ">
             <CardHeader className="space-y-1 text-center">
               <CardTitle className="text-2xl font-bold">مرحبا بك</CardTitle>
               <CardDescription>أدخل بياناتك للوصول إلى حسابك.</CardDescription>

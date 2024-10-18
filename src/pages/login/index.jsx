@@ -1,3 +1,4 @@
+import loginSVG from "../../assets/undraw_access_account_re_8spm.svg";
 import { useForm } from "react-hook-form";
 import {
   Card,
@@ -6,10 +7,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../ui/card";
-import { Button } from "../ui/button";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
+} from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
+import { Label } from "../../components/ui/label";
+import { Input } from "../../components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import toast from "react-hot-toast";
@@ -31,30 +32,30 @@ const Login = () => {
   const handleRegisterClick = () => {
     navigate("/register"); // Navigate to the /register page
   };
-  const onSubmit = async (data) => {
-    console.log(data);
 
+  const onSubmit = async (data) => {
     try {
       const response = await api.post("/doctors/login", data);
       toast.success("تم تسجيل الدخول بنجاح");
-      login(response.data);
-      navigate("/");
+      console.log(response.data.token);
 
+      login(response.data.token);
+      navigate("/");
       reset();
     } catch (error) {
       toast.error("تأكد من البيانات المدخلة");
       console.error("Error during login:", error);
     }
   };
+
   return (
     <div className="flex h-screen w-full items-center justify-center bg-gray-100 dark:bg-gray-900">
       <div className="w-full max-w-md space-y-8">
         <div className="flex justify-center h-48">
-          {/* <MountainIcon className="h-10 w-10 text-gray-900 dark:text-gray-50" /> */}
-          {/* <img src={RiseDentalLogo} alt="logo" /> */}
+          <img src={loginSVG} alt="logo" />
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Card className="rounded bg-white border py-20 ">
+          <Card className="rounded bg-white border py-20 m-8">
             <CardHeader className="space-y-1 text-center">
               <CardTitle className="text-2xl font-bold">مرحبا بك</CardTitle>
               <CardDescription>أدخل بياناتك للوصول إلى حسابك.</CardDescription>
@@ -87,12 +88,12 @@ const Login = () => {
               </Button>
             </CardFooter>
             <p className="text-center">
-              you don't have email{" "}
+              هل انت مشترك جديد{" "}
               <span
                 className="text-blue-900 underline cursor-pointer "
                 onClick={handleRegisterClick}
               >
-                Register
+                انشاء جديد
               </span>{" "}
             </p>
           </Card>

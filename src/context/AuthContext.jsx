@@ -6,18 +6,22 @@ const AuthContext = createContext();
 
 // Create the AuthProvider component
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // State to hold user info
+  const [token, setToken] = useState(null); // State to hold user info
 
-  const login = (userData) => {
-    setUser(userData); // Function to log in the user
+  const isAuthenticated = Boolean(token);
+
+  const login = (token) => {
+    setToken(token);
+    localStorage.setItem("token", token);
   };
 
   const logout = () => {
-    setUser(null); // Function to log out the user
+    setToken(null);
+    localStorage.removeItem("token");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -25,7 +29,11 @@ const AuthProvider = ({ children }) => {
 
 // Custom hook to use the AuthContext
 const useAuth = () => {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 };
 
 export { AuthProvider, useAuth };
