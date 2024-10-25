@@ -10,15 +10,22 @@ import Login from "./pages/login";
 import { AuthProvider } from "./context/AuthContext";
 
 import Register from "./pages/register/page";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <AppLayout />,
     children: [
-      { path: "/patients", element: <Patients /> },
-      { path: "/patient/:id", element: <Patient /> },
-      { path: "/examinations", element: <Examinations /> },
+      { path: "/patients", element: <ProtectedRoute element={<Patients />} /> },
+      {
+        path: "/patient/:id",
+        element: <ProtectedRoute element={<Patient />} />,
+      },
+      {
+        path: "/examinations",
+        element: <ProtectedRoute element={<Examinations />} />,
+      },
     ],
   },
   { path: "/login", element: <Login /> },
