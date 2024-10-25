@@ -14,7 +14,7 @@ import { Input } from "../../components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import toast from "react-hot-toast";
-import api from "@/data/instance";
+import instance from "@/data/instance";
 
 const Login = () => {
   const navigate = useNavigate(); // Initialize the navigate function
@@ -35,7 +35,7 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     try {
-      const response = await api.post("/doctors/login", data);
+      const response = await instance.post("/doctors/login", data);
       toast.success("تم تسجيل الدخول بنجاح");
       console.log(response.data.token);
 

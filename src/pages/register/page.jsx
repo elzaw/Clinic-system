@@ -13,7 +13,7 @@ import { Button } from "../../components/ui/button";
 import { Label } from "../../components/ui/label";
 import { Input } from "../../components/ui/input";
 import { useNavigate } from "react-router-dom";
-import api from "@/data/instance";
+import instance from "@/data/instance";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -43,7 +43,7 @@ const Register = () => {
 
     setIsLoading(true); // Set loading state
     try {
-      const response = await api.post("/doctors/", registerData); // Use registerData without confirmPassword
+      const response = await instance.post("/doctors/", registerData); // Use registerData without confirmPassword
       // Handle successful response, e.g., redirect or show success message
       toast.success("تم التسجيل بنجاح. يمكنك تسجيل الدخول الان.");
       // Redirect to login page after successful registration

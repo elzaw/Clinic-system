@@ -1,4 +1,4 @@
-import api from "@/data/instance";
+import instance from "@/data/instance";
 import { Button } from "../../components/ui/button";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -24,7 +24,7 @@ const Patients = () => {
 
   const fetchData = async () => {
     try {
-      const response = await api.get("/patients");
+      const response = await instance.get("/patients");
       console.log("API Response:", response.data);
       setPatients(response.data);
     } catch (err) {
@@ -65,7 +65,7 @@ const Patients = () => {
     try {
       if (editingPatient) {
         // If we're editing, PATCH the patient data
-        const response = await api.patch(
+        const response = await instance.patch(
           `/patients/${editingPatient._id}`,
           data
         );
@@ -77,7 +77,7 @@ const Patients = () => {
         setEditingPatient(null); // Clear the editing state after update
       } else {
         // If adding a new patient
-        const response = await api.post("/patients", data);
+        const response = await instance.post("/patients", data);
         setPatients([...patients, response.data]);
       }
       setShowForm(false);
@@ -89,7 +89,7 @@ const Patients = () => {
 
   const handleDelete = async (patientId) => {
     try {
-      await api.delete(`/patients/${patientId}`);
+      await instance.delete(`/patients/${patientId}`);
       setPatients(patients.filter((patient) => patient._id !== patientId));
     } catch (err) {
       console.error("Error deleting patient:", err);

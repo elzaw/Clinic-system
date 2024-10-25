@@ -1,4 +1,4 @@
-import api from "@/data/instance";
+import instance from "@/data/instance";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "../../components/ui/button";
@@ -35,8 +35,8 @@ const Patient = () => {
     setLoading(true);
     try {
       const [patientRes, examsRes] = await Promise.all([
-        api.get(`/patients/${id}`),
-        api.get(`/examinations/patient/${id}/`),
+        instance.get(`/patients/${id}`),
+        instance.get(`/examinations/patient/${id}/`),
       ]);
       setPatient(patientRes.data);
       setExaminations(examsRes.data);
@@ -56,7 +56,7 @@ const Patient = () => {
 
   const fetchExaminaions = async () => {
     try {
-      const response = await api.get(`examinations/patient/${id}/`);
+      const response = await instance.get(`examinations/patient/${id}/`);
       setExaminations(response.data);
     } catch (err) {
       console.error("Error fetching data:", err);
@@ -68,7 +68,7 @@ const Patient = () => {
       if (editingExam) {
         // Update existing exam
 
-        await api.patch(`/examinations/${editingExam._id}`, {
+        await instance.patch(`/examinations/${editingExam._id}`, {
           ...data,
           patient: id,
         });
@@ -80,7 +80,7 @@ const Patient = () => {
         toast.success("تم تعديل الفحص بنجاح!");
       } else {
         // Add new exam
-        const response = await api.post(`/examinations/`, {
+        const response = await instance.post(`/examinations/`, {
           ...data,
           patient: id,
         });
@@ -101,7 +101,7 @@ const Patient = () => {
 
   const handleDelete = async (examId) => {
     try {
-      await api.delete(`examinations/${examId}`);
+      await instance.delete(`examinations/${examId}`);
       setExaminations((prevExaminations) => {
         return prevExaminations?.filter((exam) => exam._id !== examId);
       });
