@@ -51,117 +51,110 @@ const Examinations = () => {
   };
 
   return (
-    <motion.div
-      className="h-full"
-      initial={{ y: "-200vh" }}
-      animate={{ y: "0%" }}
-      transition={{ duration: 1 }}
-    >
-      <div className="m-10 text-xl ">
-        <h1>ابحث عن الفحوصات بالتاريخ</h1>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
-          <input
-            type="date"
-            {...register("date")}
-            className="rounded border-gray-300 focus:border-blue-500 ring focus:ring focus:ring-blue-200 focus:ring-opacity-50 w-full p-2 m-5 "
-          />
-          <div className="flex justify-center">
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded w-1/6 "
-            >
-              ابحث
-            </button>
+    <div className="m-10 text-xl ">
+      <h1>ابحث عن الفحوصات بالتاريخ</h1>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+        <input
+          type="date"
+          {...register("date")}
+          className="rounded border-gray-300 focus:border-blue-500 ring focus:ring focus:ring-blue-200 focus:ring-opacity-50 w-full p-2 m-5 "
+        />
+        <div className="flex justify-center">
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-4 py-2 rounded w-1/6 "
+          >
+            ابحث
+          </button>
+        </div>
+      </form>
+
+      <div className="py-10 text-xl">
+        <h2 className="text-2xl font-bold text-right mr-10">الفحوصات</h2>
+        {loading ? (
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-blue-500 mx-auto"></div>
+            <h2 className="text-zinc-900 dark:text-white mt-4">
+              {" "}
+              انتظر رجاء...
+            </h2>
+            <p className="text-zinc-600 dark:text-zinc-400">
+              سوف يتم تحميل البيانات
+            </p>
           </div>
-        </form>
+        ) : examinations.length === 0 ? (
+          <p className="text-center">
+            لا يوجد فحوصات في هذا اليوم أو اختر يومًا محددًا
+          </p> // No examinations message
+        ) : (
+          examinations.map((exam, index) => (
+            <div
+              key={index}
+              className="bg-white dark:bg-gray-950 rounded shadow-lg p-6 border border-[#000080] m-5"
+            >
+              {/* Display examination details */}
+              <div>
+                <span className="text-gray-900 dark:text-gray-50 mr-2">
+                  رسوم الفحص: {exam.examinationFee}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-900 dark:text-gray-50 mr-2">
+                  المبلغ المدفوع: {exam.paid}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-900 dark:text-gray-50 mr-2">
+                  المبلغ المتبقي: {exam.remaining}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-900 dark:text-gray-50 mr-2">
+                  الإجراء: {exam.action}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-900 dark:text-gray-50 mr-2">
+                  ملاحظات: {exam.notes === "" ? "لا يوجد" : exam.notes}{" "}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-900 dark:text-gray-50 mr-2">
+                  تاريخ الكشف: {formatDate(exam.date)}{" "}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-900 dark:text-gray-50 mr-2">
+                  موعد الزيارة القادمة:{" "}
+                  {exam.nextVisit ? formatDate(exam.nextVisit) : "لا يوجد"}
+                </span>
+              </div>
+              <div className="bg-white dark:bg-gray-950 rounded shadow-lg p-6 lg:m-2 m-8 border border-[#000080] ">
+                <h2 className="text-2xl font-bold mb-4 text-right">
+                  معلومات الاتصال
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <span className="text-gray-900 dark:text-gray-50 font-medium mr-2">
+                    <UserIcon className="inline text-gray-500 mx-2" />
+                    {exam.patient?.name}
+                  </span>
 
-        <div className="py-10 text-xl">
-          <h2 className="text-2xl font-bold text-right mr-10">الفحوصات</h2>
-          {loading ? (
-            <div className="text-center">
-              <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-blue-500 mx-auto"></div>
-              <h2 className="text-zinc-900 dark:text-white mt-4">
-                {" "}
-                انتظر رجاء...
-              </h2>
-              <p className="text-zinc-600 dark:text-zinc-400">
-                سوف يتم تحميل البيانات
-              </p>
-            </div>
-          ) : examinations.length === 0 ? (
-            <p className="text-center">
-              لا يوجد فحوصات في هذا اليوم أو اختر يومًا محددًا
-            </p> // No examinations message
-          ) : (
-            examinations.map((exam, index) => (
-              <div
-                key={index}
-                className="bg-white dark:bg-gray-950 rounded shadow-lg p-6 border border-[#000080] m-5"
-              >
-                {/* Display examination details */}
-                <div>
                   <span className="text-gray-900 dark:text-gray-50 mr-2">
-                    رسوم الفحص: {exam.examinationFee}
+                    <MapPinIcon className="inline text-red-500 mx-2" />
+                    {exam.patient?.address}
                   </span>
-                </div>
-                <div>
-                  <span className="text-gray-900 dark:text-gray-50 mr-2">
-                    المبلغ المدفوع: {exam.paid}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-gray-900 dark:text-gray-50 mr-2">
-                    المبلغ المتبقي: {exam.remaining}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-gray-900 dark:text-gray-50 mr-2">
-                    الإجراء: {exam.action}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-gray-900 dark:text-gray-50 mr-2">
-                    ملاحظات: {exam.notes === "" ? "لا يوجد" : exam.notes}{" "}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-gray-900 dark:text-gray-50 mr-2">
-                    تاريخ الكشف: {formatDate(exam.date)}{" "}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-gray-900 dark:text-gray-50 mr-2">
-                    موعد الزيارة القادمة:{" "}
-                    {exam.nextVisit ? formatDate(exam.nextVisit) : "لا يوجد"}
-                  </span>
-                </div>
-                <div className="bg-white dark:bg-gray-950 rounded shadow-lg p-6 lg:m-2 m-8 border border-[#000080] ">
-                  <h2 className="text-2xl font-bold mb-4 text-right">
-                    معلومات الاتصال
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <span className="text-gray-900 dark:text-gray-50 font-medium mr-2">
-                      <UserIcon className="inline text-gray-500 mx-2" />
-                      {exam.patient?.name}
-                    </span>
 
-                    <span className="text-gray-900 dark:text-gray-50 mr-2">
-                      <MapPinIcon className="inline text-red-500 mx-2" />
-                      {exam.patient?.address}
-                    </span>
-
-                    <span className="text-gray-900 dark:text-gray-50 mr-2">
-                      <PhoneIcon className="inline text-blue-500 mx-2" />
-                      {exam.patient?.phone}
-                    </span>
-                  </div>
+                  <span className="text-gray-900 dark:text-gray-50 mr-2">
+                    <PhoneIcon className="inline text-blue-500 mx-2" />
+                    {exam.patient?.phone}
+                  </span>
                 </div>
               </div>
-            ))
-          )}
-        </div>
+            </div>
+          ))
+        )}
       </div>
-    </motion.div>
+    </div>
   );
 };
 
