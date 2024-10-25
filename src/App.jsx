@@ -14,16 +14,16 @@ import ProtectedRoute from "./components/ProtectedRoute";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <AppLayout />,
+    element: <ProtectedRoute element={<AppLayout />} />,
     children: [
-      { path: "/patients", element: <ProtectedRoute element={<Patients />} /> },
+      { path: "/patients", element: <Patients /> },
       {
         path: "/patient/:id",
-        element: <ProtectedRoute element={<Patient />} />,
+        element: <Patient />,
       },
       {
         path: "/examinations",
-        element: <ProtectedRoute element={<Examinations />} />,
+        element: <Examinations />} ,
       },
     ],
   },
