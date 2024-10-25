@@ -3,6 +3,7 @@ import { Button } from "../../components/ui/button";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { redirect, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 const Patients = () => {
   const navigate = useNavigate();
@@ -21,18 +22,26 @@ const Patients = () => {
   const [showForm, setShowForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [editingPatient, setEditingPatient] = useState(null); // Track the patient being edited
+  const [loading, setLoading] = useState(false);
 
   const fetchData = async () => {
+    setLoading(true); // Start loading
+    const token = localStorage.getItem("token");
+    const decodedToken = jwtDecode(token);
+    const doctor = decodedToken.id;
     try {
-      const response = await instance.get("/patients");
-      console.log("API Response:", response.data);
+      const response = await instance.get(`/patients/doctor/${doctor}`); // console.log("API Response:", response.data);
       setPatients(response.data);
     } catch (err) {
       console.error("Error fetching data:", err);
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
   useEffect(() => {
+    // console.log(localStorage.getItem("token"));
+
     fetchData();
   }, []);
 
@@ -63,11 +72,16 @@ const Patients = () => {
   // Function to handle adding a new patient
   const onSubmit = async (data) => {
     try {
+      const token = localStorage.getItem("token");
+      const decodedToken = jwtDecode(token);
+      const doctor = decodedToken.id;
+      const patientData = { ...data, doctor };
+
       if (editingPatient) {
         // If we're editing, PATCH the patient data
         const response = await instance.patch(
           `/patients/${editingPatient._id}`,
-          data
+          patientData
         );
         setPatients(
           patients.map((patient) =>
@@ -77,7 +91,7 @@ const Patients = () => {
         setEditingPatient(null); // Clear the editing state after update
       } else {
         // If adding a new patient
-        const response = await instance.post("/patients", data);
+        const response = await instance.post("/patients", patientData);
         setPatients([...patients, response.data]);
       }
       setShowForm(false);
@@ -190,142 +204,159 @@ const Patients = () => {
       )}
 
       <div className=" m-5 grid lg:grid-cols-3 grid-cols-1 ">
-        {filteredPatients.map((patient) => (
-          <div
-            key={patient._id}
-            className="bg-white dark:bg-gray-950 rounded shadow-lg p-6 border border-blue-300 cursor-pointer m-5  "
-            onClick={() => navigate(`/patient/${patient._id}`)}
-          >
-            <h2 className="text-2xl font-bold mb-4 flex justify-center">
-              معلومات الاتصال
+        {loading ? (
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-blue-500 mx-auto"></div>
+            <h2 className="text-zinc-900 dark:text-white mt-4">
+              {" "}
+              انتظر رجاء...
             </h2>
-            <div className="grid lg:grid-cols-1 grid-cols-1  gap-10 m-3 ">
-              <div className="flex flex-col text-right items-center">
-                <div className="">
-                  <span className="text-gray-900 dark:text-gray-50 font-normal mr-2 my-2">
-                    <UserIcon className="h-5 w-5 text-gray-500 inline" />
-                    {patient?.name}
-                  </span>
-                </div>
-                <div className="">
-                  <span className="text-gray-900 dark:text-gray-50 mr-2 my-2">
-                    <MapPinIcon className="h-5 w-5 text-red-500 inline m-2" />
-                    {patient?.address}
-                  </span>
-                </div>
-                <div className="">
-                  <span className="text-gray-900 dark:text-gray-50 mr-2 my-2">
-                    <PhoneIcon className="h-5 w-5 text-blue-500 inline mx-2" />
-                    {patient?.phone}{" "}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-center ">
-              <Button
-                className="text-yellow-500 bg-transparent border border-yellow-500 px-10 py-3 rounded hover:bg-yellow-500 hover:text-white mx-3"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleEditClick(patient);
-                }}
-              >
-                تعديل
-              </Button>
-
-              {showEditForm && (
-                <div
-                  className="fixed top-0 left-0 w-full min-h-screen bg-black bg-opacity-15 flex items-center justify-center z-20"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
-                >
-                  <div className="bg-white p-5 border border-gray-300 rounded-lg shadow-lg w-[90%] md:w-[50%] relative z-30">
-                    <h2 className="text-2xl font-bold mb-4">
-                      تعديل بيانات مريض
-                    </h2>
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                      <div className="mb-4">
-                        <label className="block text-gray-700">
-                          اسم المريض
-                        </label>
-                        <input
-                          type="text"
-                          name="name"
-                          {...register("name", { required: "الاسم مطلوب" })}
-                          className="rounded border border-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-200 w-full p-2"
-                        />
-                        {errors.name && (
-                          <p className="text-red-500">{errors.name.message}</p>
-                        )}
-                      </div>
-                      <div className="mb-4">
-                        <label className="block text-gray-700">العنوان</label>
-                        <input
-                          type="text"
-                          name="address"
-                          {...register("address", {
-                            required: "العنوان مطلوب",
-                          })}
-                          className="rounded border border-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-200 w-full p-2"
-                        />
-                      </div>
-                      {errors.address && (
-                        <p className="text-red-500">{errors.address.message}</p>
-                      )}
-                      <div className="mb-4">
-                        <label className="block text-gray-700">الهاتف</label>
-                        <input
-                          type="text"
-                          name="phone"
-                          {...register("phone", {
-                            required: "الهاتف مطلوب",
-                            pattern: {
-                              value: /^[0-9]+$/,
-                              message: "الهاتف يجب أن يكون رقما",
-                            },
-                          })}
-                          className="rounded border border-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-200 w-full p-2"
-                        />
-                      </div>
-                      {errors.phone && (
-                        <p className="text-red-500">{errors.phone.message}</p>
-                      )}
-                      <div className="flex justify-end">
-                        <Button
-                          type="submit"
-                          className="text-white bg-blue-500 px-5 py-2 rounded mx-2"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
-                        >
-                          تعديل
-                        </Button>
-                        <Button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowEditForm(false);
-                          }}
-                          className="text-white bg-red-500 px-5 py-2 rounded mx-2"
-                        >
-                          غلق النموذج
-                        </Button>
-                      </div>
-                    </form>
+            <p className="text-zinc-600 dark:text-zinc-400">
+              سوف يتم تحميل البيانات
+            </p>
+          </div>
+        ) : (
+          filteredPatients.map((patient) => (
+            <div
+              key={patient._id}
+              className="bg-white dark:bg-gray-950 rounded shadow-lg p-6 border border-blue-300 cursor-pointer m-5  "
+              onClick={() => navigate(`/patient/${patient._id}`)}
+            >
+              <h2 className="text-2xl font-bold mb-4 flex justify-center">
+                معلومات الاتصال
+              </h2>
+              <div className="grid lg:grid-cols-1 grid-cols-1  gap-10 m-3 ">
+                <div className="flex flex-col text-right items-center">
+                  <div className="">
+                    <span className="text-gray-900 dark:text-gray-50 font-normal mr-2 my-2">
+                      <UserIcon className="h-5 w-5 text-gray-500 inline" />
+                      {patient?.name}
+                    </span>
+                  </div>
+                  <div className="">
+                    <span className="text-gray-900 dark:text-gray-50 mr-2 my-2">
+                      <MapPinIcon className="h-5 w-5 text-red-500 inline m-2" />
+                      {patient?.address}
+                    </span>
+                  </div>
+                  <div className="">
+                    <span className="text-gray-900 dark:text-gray-50 mr-2 my-2">
+                      <PhoneIcon className="h-5 w-5 text-blue-500 inline mx-2" />
+                      {patient?.phone}{" "}
+                    </span>
                   </div>
                 </div>
-              )}
-              <Button
-                className="text-red-500 bg-transparent border border-red-500 px-10 py-3 rounded hover:bg-red-500 hover:text-white mx-3"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDelete(patient._id, e);
-                }}
-              >
-                حذف
-              </Button>
+              </div>
+              <div className="flex justify-center ">
+                <Button
+                  className="text-yellow-500 bg-transparent border border-yellow-500 px-10 py-3 rounded hover:bg-yellow-500 hover:text-white mx-3"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEditClick(patient);
+                  }}
+                >
+                  تعديل
+                </Button>
+
+                {showEditForm && (
+                  <div
+                    className="fixed top-0 left-0 w-full min-h-screen bg-black bg-opacity-15 flex items-center justify-center z-20"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
+                    <div className="bg-white p-5 border border-gray-300 rounded-lg shadow-lg w-[90%] md:w-[50%] relative z-30">
+                      <h2 className="text-2xl font-bold mb-4">
+                        تعديل بيانات مريض
+                      </h2>
+                      <form onSubmit={handleSubmit(onSubmit)}>
+                        <div className="mb-4">
+                          <label className="block text-gray-700">
+                            اسم المريض
+                          </label>
+                          <input
+                            type="text"
+                            name="name"
+                            {...register("name", { required: "الاسم مطلوب" })}
+                            className="rounded border border-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-200 w-full p-2"
+                          />
+                          {errors.name && (
+                            <p className="text-red-500">
+                              {errors.name.message}
+                            </p>
+                          )}
+                        </div>
+                        <div className="mb-4">
+                          <label className="block text-gray-700">العنوان</label>
+                          <input
+                            type="text"
+                            name="address"
+                            {...register("address", {
+                              required: "العنوان مطلوب",
+                            })}
+                            className="rounded border border-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-200 w-full p-2"
+                          />
+                        </div>
+                        {errors.address && (
+                          <p className="text-red-500">
+                            {errors.address.message}
+                          </p>
+                        )}
+                        <div className="mb-4">
+                          <label className="block text-gray-700">الهاتف</label>
+                          <input
+                            type="text"
+                            name="phone"
+                            {...register("phone", {
+                              required: "الهاتف مطلوب",
+                              pattern: {
+                                value: /^[0-9]+$/,
+                                message: "الهاتف يجب أن يكون رقما",
+                              },
+                            })}
+                            className="rounded border border-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-200 w-full p-2"
+                          />
+                        </div>
+                        {errors.phone && (
+                          <p className="text-red-500">{errors.phone.message}</p>
+                        )}
+                        <div className="flex justify-end">
+                          <Button
+                            type="submit"
+                            className="text-white bg-blue-500 px-5 py-2 rounded mx-2"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                            }}
+                          >
+                            تعديل
+                          </Button>
+                          <Button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowEditForm(false);
+                            }}
+                            className="text-white bg-red-500 px-5 py-2 rounded mx-2"
+                          >
+                            غلق النموذج
+                          </Button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                )}
+                <Button
+                  className="text-red-500 bg-transparent border border-red-500 px-10 py-3 rounded hover:bg-red-500 hover:text-white mx-3"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(patient._id, e);
+                  }}
+                >
+                  حذف
+                </Button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );

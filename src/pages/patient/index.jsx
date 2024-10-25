@@ -10,6 +10,7 @@ import {
 } from "../../components/ui/card";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { jwtDecode } from "jwt-decode";
 
 const Patient = () => {
   const {
@@ -20,6 +21,7 @@ const Patient = () => {
     reset,
     formState: { errors },
   } = useForm();
+
   const { id } = useParams(); // Extract the patient ID from the URL
   const [patient, setPatient] = useState("");
   const [loading, setLoading] = useState(true); // State to manage loading status
@@ -33,6 +35,9 @@ const Patient = () => {
   // Fetch patient data based on the provided ID
   const fetchData = async () => {
     setLoading(true);
+    const token = localStorage.getItem("token");
+    const decodedToken = jwtDecode(token);
+    const doctor = decodedToken.id;
     try {
       const [patientRes, examsRes] = await Promise.all([
         instance.get(`/patients/${id}`),
@@ -46,6 +51,7 @@ const Patient = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchData();
   }, [id]);

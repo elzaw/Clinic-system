@@ -17,7 +17,7 @@ const Navbar = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log("API Response:", response.data);
+        // console.log("API Response:", response.data);
       } catch (err) {
         console.error("Error fetching data:", err);
       }
